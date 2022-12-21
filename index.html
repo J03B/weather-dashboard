@@ -13,15 +13,67 @@
       href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css"
       rel="stylesheet"
     />
-    <link href="./assets/style.css" />
-
-    <link rel="stylesheet" href="./assets/css/style.css" />
+    <link rel="stylesheet" href="./assets/style.css" />
     <title>J03B's Weather Portal</title>
   </head>
-  <body>
 
+  <body>
+    <!-- Bootstrap header/nav bar -->
+    <header class="text-center">
+      <nav class="navbar navbar-dark bg-primary">
+        <div class="container-fluid justify-content-center">
+          <h1 class="display-1 text-white" >Weather Portal</h1>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Bootstrap search area -->
+    <div class="row p-4 justify-content-around">
+      <aside class="col-lg-3 card">
+        <h2 class="dispay-3">Search for a city</h2>
+        <input type="text" class="form-control p-2 my-2" placeholder="Las Vegas" aria-label="city" aria-describedby="addon-wrapping">
+        <button type="button" class="btn btn-primary my-2">Search</button>
+        <hr class="hr weather-hr" />
+
+        <!-- Display search history list added via ./assets/script.js -->
+      </aside>
+
+      <!-- Bootstrap display city current area -->
+      <div class="col-lg-8 p-4">
+        <section
+          id="today"
+          role="region"
+          aria-live="polite"
+        ></section>
+
+        <!-- Display city's 5 day predictions -->
+        <section
+          id="forecast"
+          role="region"
+          aria-live="polite"
+        ></section>
+      </div>
+    </div>
+    
   </body>
   <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
   <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
-  <script src="./assets/js/script.js"></script>
+  <script src="./assets/script.js"></script>
+
+  <!-- use day.js API to format dates with their timezones -->
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.4/dayjs.min.js"
+    integrity="sha512-0fcCRl828lBlrSCa8QJY51mtNqTcHxabaXVLPgw/jPA5Nutujh6CbTdDgRzl9aSPYW/uuE7c4SffFUQFBAy6lg=="
+    crossorigin="anonymous"
+  ></script>
+  <script 
+    src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.4/plugin/utc.min.js" 
+    integrity="sha512-m00bfmYnAl3plEBlQfeQUhw/U2uvmw29V2+jxSWpAjankMWS+zAsjezbKWDEJNXqWq9o9qQZSOiA2RKDpa4D5w==" 
+    crossorigin="anonymous"
+  ></script>
+  <script 
+    src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.4/plugin/timezone.min.js" 
+    integrity="sha512-pslqxxHAYPCxaSeFSmXXxDkLejD5dbFVC66aiVq0z4v7VTJBU+wqcG1OpNh4p3MjS2D6NCwz/H2QmSc7dXxryg==" 
+    crossorigin="anonymous"
+  ></script>
 </html>
