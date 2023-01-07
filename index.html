@@ -30,18 +30,22 @@
     <!-- Bootstrap search area -->
     <div class="row p-4 justify-content-around">
       <aside class="col-lg-3 card">
-        <h2 class="dispay-3">Search for a city</h2>
-        <input type="text" class="form-control p-2 my-2" placeholder="Las Vegas" aria-label="city" aria-describedby="addon-wrapping">
-        <button type="button" class="btn btn-primary my-2">Search</button>
-        <hr class="hr weather-hr" />
+        <form id="search-area">
+          <h2 class="dispay-3">Search for a city</h2>
+          <input id="search-input" type="text" class="form-control p-2 my-2" placeholder="Las Vegas" aria-label="city" aria-describedby="addon-wrapping">
+          <button type="submit" class="btn btn-primary my-2 w-100">Search</button>
+          <hr class="hr history-hr" />
 
-        <!-- Display search history list added via ./assets/script.js -->
+          <!-- Display search history list added via ./assets/script.js 
+                probably with some <button> elements -->
+          <div id="search-history"></div>
+        </form>
       </aside>
 
       <!-- Bootstrap display city current area -->
       <div class="col-lg-8 p-4">
         <section
-          id="today"
+          id="current"
           role="region"
           aria-live="polite"
         ></section>
@@ -58,7 +62,6 @@
   </body>
   <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
   <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
-  <script src="./assets/script.js"></script>
 
   <!-- use day.js API to format dates with their timezones -->
   <script
@@ -76,4 +79,7 @@
     integrity="sha512-pslqxxHAYPCxaSeFSmXXxDkLejD5dbFVC66aiVq0z4v7VTJBU+wqcG1OpNh4p3MjS2D6NCwz/H2QmSc7dXxryg==" 
     crossorigin="anonymous"
   ></script>
+
+  <!-- My personalized JS file -->
+  <script src="./assets/script.js"></script>
 </html>
