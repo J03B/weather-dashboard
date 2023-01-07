@@ -1,29 +1,50 @@
 // Needed Global Variables 
-var searchHistory = [];
 var OpenWeatherAPIRootURL = 'https://api.openweathermap.org';
 var OpenWeatherAPIKey = 'ac787e5652c880b90a50b80752a412ca';     // From my J03B account
+var searchHistory = [];
 
 // Ease of access for DOM elements - references
 var searchArea = document.querySelector('#search-area');
 var searchInput = document.querySelector('#search-input');
-var searchHistory = document.querySelector('#search-history');
+var searchHistorySection = document.querySelector('#search-history');
 var currentSection = document.querySelector('#current');
 var forecastSection = document.querySelector('#forecast');
 
-// Function to get Search History from Client
-function getSearchHistory() {
-
-}
-
 // Function to render the search history to the page
 function renderSearchHistory() {
+    searchHistorySection.innerHTML = "";
 
+    for (let i = searchHistory.length - 1; i >= 0 ; i--) {
+        const srchTerm = searchHistory[i];
+        var histBtn = document.createElement('button');
+
+        histBtn.setAttribute('type','button');
+        histBtn.setAttribute('aria-controls','current forecast');
+        histBtn.setAttribute('data-id', srchTerm);
+        histBtn.classList.add('history-btn');
+        histBtn.textContent = srchTerm;
+        searchHistorySection.append(histBtn);
+    }
 }
 
 // Function to add a newly searched item to the search history and rerender history
 function appendSearchToHistory(srch) {
+    // If srch doesn't exist at all or already exists in history - don't append anything
+    if (searchHistory.indexOf(srch) !== -1) {
+        return;
+    }
+    searchHistory.push(srch);
 
+    localStorage.setItem('j03b-wthr-srch-hstry',JSON.stringify(searchHistory));
+    renderSearchHistory();
+}
 
+// Function to get Search History from Client
+function getSearchHistory() {
+    var userHistory = localStorage.getItem('j03b-wthr-srch-hstry');
+    if (userHistory) {
+        searchHistory = JSON.parse(userHistory);
+    }
     renderSearchHistory();
 }
 
@@ -61,15 +82,28 @@ function getCoordinates(srch) {
 
 // Function to handle the form searches
 function handleFormSearch(event) {
-
+    var srch = searchInput.value.trim();
+    searchInput.value = "";
+    // Validation checks - if blank
+    if (!srch) {
+        return;
+    }
+    event.preventDefault();
+    getCoordinates(srch);
 }
 
 // Function to handle the history resubmissions (click history buttons)
 function handleFormSubmit(event) {
-
+    var btn = event.target;
+    // Make sure the user is pressing a history button
+    if (btn.matches('history-btn')) {
+        return;
+    }
+    var srch = btn.getAttribute('data-id');
+    getCoordinates(srch);
 }
 
 // Code we actually start running on page load
 getSearchHistory();
 searchArea.addEventListener('submit',handleFormSearch);
-searchHistory.addEventListener('click',handleFormSubmit);
+searchHistorySection.addEventListener('click',handleFormSubmit);
