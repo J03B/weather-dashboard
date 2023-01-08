@@ -79,10 +79,7 @@ function renderCurrent(loc,weather) {
     iconImg.setAttribute('src', weatherIcon);
     iconImg.setAttribute('alt', weatherIconDesc);
     curTempEl.setAttribute('class', 'h2');
-    tempEl.setAttribute('class', 'card-text my-0');
-    tempFLEl.setAttribute('class', 'card-text');
-    humidEl.setAttribute('class', 'card-text');
-    windEl.setAttribute('class', 'card-text');
+    tempEl.setAttribute('class', 'my-0');
 
     // Add all necessary text to elements
     cityHeader.textContent = `${loc} (${dt})`;
@@ -102,19 +99,80 @@ function renderCurrent(loc,weather) {
 
 // Function to render individual forcast modals for each day
 function renderForecastModal(forecast) {
+    // Define all needed variables from weather API data
+    var dt = dayjs(forecast.dt_txt).format('MM/DD/YYYY');
+    var degFHigh = forecast.main.temp_max;
+    var degFLow = forecast.main.temp_min;
+    var humidity = forecast.main.humidity;
+    var windSpeed = forecast.wind.speed;
+    var weatherIcon = `https://openweathermap.org/img/w/${forecast.weather[0].icon}.png`;
+    var weatherIconDesc = forecast.weather[0].description;
 
+    // Create DOM elements for the current weather section
+    var modalSec = document.createElement('div');
+    var secBody = document.createElement('div');
+    var dtHeader = document.createElement('h3');
+    var iconImg = document.createElement('img');
+    var tempHEl = document.createElement('p');
+    var tempLEl = document.createElement('p');
+    var humidEl = document.createElement('p');
+    var windEl = document.createElement('p');
+
+    // Create bootstrap classes for the new elements
+    modalSec.setAttribute('class', 'card col-lg-2 col-5 m-1');
+    secBody.setAttribute('class', 'card-body px-0 py-2');
+    dtHeader.setAttribute('class', 'h4 card-title');
+    iconImg.setAttribute('src', weatherIcon);
+    iconImg.setAttribute('alt', weatherIconDesc);
+    tempHEl.setAttribute('class', 'h5');
+    tempLEl.setAttribute('class', 'h5');
+
+    // Add all necessary text to elements
+    dtHeader.textContent = `${dt}`;
+    tempHEl.textContent = `H: ${degFHigh}°F`;
+    tempLEl.textContent = `L: ${degFLow}°F`;
+    humidEl.textContent = `Humidity: ${humidity}%`;
+    windEl.textContent = `Wind: ${windSpeed} mph`;
+
+    // Connect DOM elements to display to page
+    modalSec.append(secBody);
+    dtHeader.append(iconImg);
+    secBody.append(dtHeader, tempHEl, tempLEl, humidEl, windEl);
+    forecastSection.append(modalSec);
 }
 
 // Function to render the 5-day forecast strip to the page
-function renderForecast(forecastList) {
-
+function renderForecast(loc, forecastList) {
+    // Get the unix values to validate the right days are displayed
+    var dt1 = dayjs().add(1, 'day').startOf('day').unix();
+    var dt5 = dayjs().add(6, 'day').startOf('day').unix();
+  
+    // Create bootstrap DOM elements and set attributes for forecast header
+    var headingSection = document.createElement('div');
+    var headingTextEl = document.createElement('h4');
+    headingSection.setAttribute('class', 'container-fluid row my-2');
+    headingTextEl.setAttribute('class', 'col-12');
+    headingTextEl.textContent = `5-Day Forecast for ${loc}:`;
+    headingSection.append(headingTextEl);
+    forecastSection.innerHTML = '';
+    forecastSection.append(headingSection);
+  
     // Loop through each day of the forecastList input
+    for (var i = 0; i < forecastList.length; i++) {
+        // Filter the list to only return days between 1 and 5 after today with unix vars
+        if ((forecastList[i].dt >= dt1) && (forecastList[i].dt < dt5)) {
+            // Then filter to get values for midday (unix)
+            if (forecastList[i].dt_txt.slice(11, 13) == "12") {
+                renderForecastModal(forecastList[i]);
+            }
+        }
+    }
 }
 
 // Function to render the weather items on the page
 function renderWeather(loc, weather) {
     renderCurrent(loc, weather.list[0]);
-    renderForecast(weather.list);
+    renderForecast(loc, weather.list);
 }
 
 // Function to fetch weather from a location
