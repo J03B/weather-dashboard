@@ -50,7 +50,54 @@ function getSearchHistory() {
 
 // Function to render the current weather block to the page
 function renderCurrent(loc,weather) {
+    // Define all needed variables from weather API data
+    var dt = dayjs().format('MM/DD/YYYY');
+    var degFCur = weather.main.temp;
+    var degFHigh = weather.main.temp_max;
+    var degFLow = weather.main.temp_min;
+    var degFFeelsLike = weather.main.feels_like;
+    var humidity = weather.main.humidity;
+    var windSpeed = weather.wind.speed;
+    var weatherIcon = `https://openweathermap.org/img/w/${weather.weather[0].icon}.png`;
+    var weatherIconDesc = weather.weather[0].description;
 
+    // Create DOM elements for the current weather section
+    var curWeatherSection = document.createElement('div');
+    var secBody = document.createElement('div');
+    var cityHeader = document.createElement('h3');
+    var iconImg = document.createElement('img');
+    var curTempEl = document.createElement('p');
+    var tempEl = document.createElement('p');
+    var tempFLEl = document.createElement('p');
+    var humidEl = document.createElement('p');
+    var windEl = document.createElement('p');
+
+    // Create bootstrap classes for the new elements
+    curWeatherSection.setAttribute('class', 'card');
+    secBody.setAttribute('class', 'card-body');
+    cityHeader.setAttribute('class', 'h3 card-title');
+    iconImg.setAttribute('src', weatherIcon);
+    iconImg.setAttribute('alt', weatherIconDesc);
+    curTempEl.setAttribute('class', 'h2');
+    tempEl.setAttribute('class', 'card-text my-0');
+    tempFLEl.setAttribute('class', 'card-text');
+    humidEl.setAttribute('class', 'card-text');
+    windEl.setAttribute('class', 'card-text');
+
+    // Add all necessary text to elements
+    cityHeader.textContent = `${loc} (${dt})`;
+    curTempEl.textContent = `${degFCur}°F`;
+    tempEl.textContent = `H: ${degFHigh}°F  L: ${degFLow}°F`;
+    tempFLEl.textContent = `Feels like: ${degFFeelsLike}°F`;
+    humidEl.textContent = `Humidity: ${humidity}%`;
+    windEl.textContent = `Wind: ${windSpeed} mph`;
+
+    // Connect DOM elements to display to page
+    curWeatherSection.append(secBody);
+    cityHeader.append(iconImg);
+    secBody.append(cityHeader, curTempEl, tempEl, tempFLEl, humidEl, windEl);
+    currentSection.innerHTML = "";
+    currentSection.append(curWeatherSection);
 }
 
 // Function to render individual forcast modals for each day
@@ -66,15 +113,26 @@ function renderForecast(forecastList) {
 
 // Function to render the weather items on the page
 function renderWeather(loc, weather) {
-    renderCurrent(loc, weather[0]);
-    renderForecast(weather);
+    renderCurrent(loc, weather.list[0]);
+    renderForecast(weather.list);
 }
 
 // Function to fetch weather from a location
 function getWeather(geoVar) {
     var lat = geoVar.lat;
     var lon = geoVar.lon;
-    var apiURL = `${OpenWeatherAPIRootURL}/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${OpenWeatherAPIKey}`;
+    var apiURL = `${OpenWeatherAPIRootURL}/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${OpenWeatherAPIKey}`;
+    fetch(apiURL)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (variables) {
+            renderWeather(geoVar.name, variables);
+            console.log(variables);
+        })
+        .catch(function (er) {
+            console.error(er);
+        });
 }
 
 // Function to fetch coordinates from the search input
@@ -89,7 +147,6 @@ function getCoordinates(srch) {
                 window.alert(`Could not find a location for "${srch}".`);
             }
             else {
-                console.log(variables[0]);
                 appendSearchToHistory(`${variables[0].name}, ${variables[0].state}, ${variables[0].country}`);
                 getWeather(variables[0]);
             }
@@ -116,7 +173,6 @@ function handleFormSubmit(event) {
     var btn = event.target;
     // Make sure the user is pressing a history button
     if (!btn.matches('.history-btn')) {
-        console.log("Not a history-btn");
         return;
     }
     var srch = btn.getAttribute('data-id');
