@@ -21,7 +21,7 @@ function renderSearchHistory() {
         histBtn.setAttribute('type','button');
         histBtn.setAttribute('aria-controls','current forecast');
         histBtn.setAttribute('data-id', srchTerm);
-        histBtn.classList.add('history-btn');
+        histBtn.classList.add('btn', 'btn-secondary', 'w-100', 'my-1', 'history-btn');
         histBtn.textContent = srchTerm;
         searchHistorySection.append(histBtn);
     }
@@ -71,13 +71,32 @@ function renderWeather(loc, weather) {
 }
 
 // Function to fetch weather from a location
-function getWeather(loc) {
-
+function getWeather(geoVar) {
+    var lat = geoVar.lat;
+    var lon = geoVar.lon;
+    var apiURL = `${OpenWeatherAPIRootURL}/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${OpenWeatherAPIKey}`;
 }
 
 // Function to fetch coordinates from the search input
 function getCoordinates(srch) {
-
+    var coordinatesURL = `${OpenWeatherAPIRootURL}/geo/1.0/direct?q=${srch}&limit=5&appid=${OpenWeatherAPIKey}` // max limit
+    fetch(coordinatesURL)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (variables) {
+            if (!variables[0]) {
+                window.alert(`Could not find a location for "${srch}".`);
+            }
+            else {
+                console.log(variables[0]);
+                appendSearchToHistory(`${variables[0].name}, ${variables[0].state}, ${variables[0].country}`);
+                getWeather(variables[0]);
+            }
+        })
+        .catch(function (er) {
+            console.error(er);
+        });
 }
 
 // Function to handle the form searches
@@ -96,7 +115,8 @@ function handleFormSearch(event) {
 function handleFormSubmit(event) {
     var btn = event.target;
     // Make sure the user is pressing a history button
-    if (btn.matches('history-btn')) {
+    if (!btn.matches('.history-btn')) {
+        console.log("Not a history-btn");
         return;
     }
     var srch = btn.getAttribute('data-id');
