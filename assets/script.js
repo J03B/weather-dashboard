@@ -102,7 +102,6 @@ function renderForecastModal(forecast) {
     // Define all needed variables from weather API data
     var dt = dayjs(forecast.dt_txt).format('MM/DD/YYYY');
     var degFHigh = forecast.main.temp_max;
-    var degFLow = forecast.main.temp_min;
     var humidity = forecast.main.humidity;
     var windSpeed = forecast.wind.speed;
     var weatherIcon = `https://openweathermap.org/img/w/${forecast.weather[0].icon}.png`;
@@ -114,7 +113,6 @@ function renderForecastModal(forecast) {
     var dtHeader = document.createElement('h3');
     var iconImg = document.createElement('img');
     var tempHEl = document.createElement('p');
-    var tempLEl = document.createElement('p');
     var humidEl = document.createElement('p');
     var windEl = document.createElement('p');
 
@@ -125,19 +123,17 @@ function renderForecastModal(forecast) {
     iconImg.setAttribute('src', weatherIcon);
     iconImg.setAttribute('alt', weatherIconDesc);
     tempHEl.setAttribute('class', 'h5');
-    tempLEl.setAttribute('class', 'h5');
 
     // Add all necessary text to elements
     dtHeader.textContent = `${dt}`;
-    tempHEl.textContent = `H: ${degFHigh}°F`;
-    tempLEl.textContent = `L: ${degFLow}°F`;
+    tempHEl.textContent = `${degFHigh}°F`;
     humidEl.textContent = `Humidity: ${humidity}%`;
     windEl.textContent = `Wind: ${windSpeed} mph`;
 
     // Connect DOM elements to display to page
     modalSec.append(secBody);
     dtHeader.append(iconImg);
-    secBody.append(dtHeader, tempHEl, tempLEl, humidEl, windEl);
+    secBody.append(dtHeader, tempHEl, humidEl, windEl);
     forecastSection.append(modalSec);
 }
 
